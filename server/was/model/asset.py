@@ -29,8 +29,8 @@ class Asset(Model):
         asset.name = name
         asset.content_type = content_type
         asset.uuid = asset_uuid
-        asset.url = f'/{object_name}'
-        asset.download_url = f'/{object_name}'
+        asset.url = f'/asset/{object_name}'
+        asset.download_url = f'/asset/{object_name}'
 
         return asset
 

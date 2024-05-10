@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/inajung/workspace/ina/restaurant/server/venv"
+VIRTUAL_ENV="/Users/global/workspace/ina/restaurant_with_python/server/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

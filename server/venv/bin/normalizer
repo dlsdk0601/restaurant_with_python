@@ -1,4 +1,4 @@
-#!/Users/inajung/workspace/ina/restaurant/server/venv/bin/python3.11
+#!/Users/global/workspace/ina/restaurant_with_python/server/venv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys

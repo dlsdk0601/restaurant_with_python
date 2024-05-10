@@ -29,4 +29,5 @@ was/main.py
 was/blueprints/__init__.py
 was/blueprints/api/__init__.py
 was/model/__init__.py
+was/model/asset.py
 was/model/user.py
