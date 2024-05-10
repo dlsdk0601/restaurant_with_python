@@ -1,0 +1,18 @@
+Metadata-Version: 2.1
+Name: sconfig
+Version: 0.0.3
+Summary: Simple config
+Home-page: https://github.com/sungmin-park/sconfig.py
+Author: Park Sung Min
+License: MIT
+Platform: UNKNOWN
+Provides-Extra: dev
+Provides-Extra: dev
+Requires-Dist: pytest (==3.6.3); extra == 'dev'
+Requires-Dist: pytest-mock (==1.10.0); extra == 'dev'
+Requires-Dist: wheel (==0.31.1); extra == 'dev'
+Requires-Dist: twine (==4.0.2); extra == 'dev'
+
+UNKNOWN
+
+
