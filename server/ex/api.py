@@ -23,13 +23,14 @@ from ex.py.enum_ex import StringEnum
 class BaseModel(pydantic.BaseModel):
     class Config:
         alias_generator = camelcase
-        populate_by_name = True
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
 
 
-class GenericModel(pydantic.BaseModel):
+class GenericModel(pydantic.generics.GenericModel):
     class Config:
         alias_generator = camelcase
-        populate_by_name = True
+        allow_population_by_field_name = True
 
 
 RES_DATA = TypeVar('RES_DATA', bound=BaseModel)

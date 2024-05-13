@@ -1,9 +1,11 @@
 from typing import Tuple, Optional
+from uuid import UUID
 
-from flask import request
+from flask import request, session, Response
+from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 
-from ex.api import ApiBlueprint
+from ex.api import ApiBlueprint, res_jsonify, Res, ResStatus
 from ex.flask_ex import global_proxy
 from ex.py.ex import parse_uuid
 from ex.sqlalchemy_ex import false
@@ -24,7 +26,14 @@ app = _ApiBlueprint('api_app', __name__)
 
 
 class UserGlobal:
+    _USER_AUTHENTICATION_PK = "USER_AUTHENTICATION_PK"
     _user_authentication: UserAuthentication | None
+
+    def get_user_authentication_pk(self) -> int | None:
+        return session.get(self._USER_AUTHENTICATION_PK)
+
+    def set_user_authentication_pk(self, access_token_pk):
+        session[self._USER_AUTHENTICATION_PK] = access_token_pk
 
     @property
     def user_authentication(self) -> Optional[UserAuthentication]:
@@ -61,3 +70,41 @@ class UserGlobal:
 
 
 bg = global_proxy("user", UserGlobal)
+
+
+@app.before_request
+def before_request() -> Response | None:
+    req_token = request.headers.get('X-Access-Token')
+    auth: UserAuthentication | None = None
+    access_token: UUID | None = None
+
+    if req_token:
+        try:
+            access_token = UUID(req_token)
+        except ValueError:
+            pass
+
+    if access_token:
+        conditions = [
+            UserAuthentication.access_token == access_token,
+            UserAuthentication.expire_at >= func.now()
+        ]
+        auth = db.session.query(UserAuthentication).filter(*conditions).one_or_none()
+
+        if auth:
+            auth.update_expire_at()
+            db.session.commit()
+
+    if not auth:
+        require_access_token = True
+        match ((request.endpoint or '').split('.', maxsplit=2)):
+            case [_, endpoint]:
+                if endpoint in ['sign_in']:
+                    require_access_token = False
+            case _:
+                pass
+
+        if require_access_token:
+            return res_jsonify(Res(errors=[], status=ResStatus.INVALID_ACCESS_TOKEN, validation_errors=[]))
+
+    return None

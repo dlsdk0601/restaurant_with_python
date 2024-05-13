@@ -24,7 +24,7 @@ mypy-check:
 	venv/bin/dmypy run -- was ex bin
 
 code-gen:
-	(source venv/bin/activate && $(MAKE) '_code-gen')
+	#(source venv/bin/activate && $(MAKE) '_code-gen')
 
 _code-gen:
 	python bin/generate_api_ts_schema.py | python bin/tee.py ../tris-addee2-admin/src/api/schema.g.ts

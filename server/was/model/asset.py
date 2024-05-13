@@ -46,7 +46,4 @@ class Asset(Model):
             uuid=self.uuid, name=self.name, url=self.url,
             download_url=self.download_url,
             content_type=self.content_type,
-            size=self.size,
-            duration=self.duration,
-            thumbnail=self._create_thumbnail()
         )

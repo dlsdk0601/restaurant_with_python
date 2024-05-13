@@ -6,7 +6,7 @@ from stringcase import camelcase
 
 from ex.py.datetime_ex import now
 from was.application import app
-from was.blueprints import sf
+from was.blueprints import api
 
 
 def main() -> None:
@@ -15,7 +15,7 @@ def main() -> None:
     print(f'// 자동생성 파일 수정 금지 - {os.path.basename(__file__)} {now()}')
     print('')
 
-    schemas = sf.app.export_api_schema()
+    schemas = api.app.export_api_schema()
 
     # 연결된 모든 스키마 임포트
     schema_names = sorted(set(flatten([i.req.__name__, i.res_data.__name__] for i in schemas)))
@@ -27,7 +27,7 @@ def main() -> None:
     # 클래스 정의
     print(f'export class Api extends ApiBase {{')
     for schema in schemas:
-        url = url_for(sf.app.name + '.' + schema.endpoint)
+        url = url_for(api.app.name + '.' + schema.endpoint)
         print(
             f"\treadonly {camelcase(schema.endpoint)} = "
             f"this.c<{schema.req.__name__}, {schema.res_data.__name__}>('{url}');"

@@ -4,7 +4,7 @@ Version: 1.0.0
 Requires-Dist: Flask==3.0.3
 Requires-Dist: werkzeug==3.0.3
 Requires-Dist: sconfig==0.0.3
-Requires-Dist: pydantic==2.7.1
+Requires-Dist: pydantic==1.10.14
 Requires-Dist: stringcase==1.2.0
 Requires-Dist: Flask-Cors==4.0.1
 Requires-Dist: SQLAlchemy==2.0.30

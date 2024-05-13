@@ -15,7 +15,6 @@ from werkzeug.datastructures import FileStorage
 from ex.api import ResStatus, Res
 from ex.py.datetime_ex import now
 from was import application
-from was.blueprints.sf.asset import AssetNewRes
 
 
 def generate() -> None:
@@ -24,11 +23,10 @@ def generate() -> None:
     print(f'// 자동생성 파일 수정 금지 - {os.path.basename(__file__)} {now()}')
     print('')
 
-    api_schemas = list(flatten([i.req, i.res_data] for i in application.sf.app.export_api_schema()))
+    api_schemas = list(flatten([i.req, i.res_data] for i in application.app.export_api_schema()))
     models: set[Type[BaseModel | Enum]] = get_flat_models_from_models(api_schemas)
     models.add(ResStatus)
     models.add(Res)
-    models.add(AssetNewRes)
     for model in sorted(models, key=lambda x: x.__name__):
         if issubclass(model, Enum):
             print(generate_enum(model))
@@ -37,7 +35,8 @@ def generate() -> None:
 
 
 def generate_class(model: Type[BaseModel]) -> str:
-    name = _de_generic_name(model.__name__)
+    # name = _de_generic_name(model.__name__)
+    name = model.__name__
     properties: list[str] = []
     field: ModelField
     for field in model.__fields__.values():

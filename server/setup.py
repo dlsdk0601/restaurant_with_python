@@ -9,7 +9,7 @@ setup(
         'Flask==3.0.3',
         'werkzeug==3.0.3',
         'sconfig==0.0.3',
-        'pydantic==2.7.1',
+        'pydantic==1.10.14',
         'stringcase==1.2.0',
         'Flask-Cors==4.0.1',
         # 데이터베이스

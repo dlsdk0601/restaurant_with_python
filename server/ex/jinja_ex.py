@@ -1,14 +1,9 @@
 from itertools import chain
-from typing import List
 
 import pytz
 from flask import Flask
 
 __all__ = ['init_app']
-
-
-from wtforms import Field
-from wtforms.validators import DataRequired
 
 
 def dt1(datetime):
@@ -80,22 +75,23 @@ def classes(*args: str, **kwargs: bool) -> str:
     return ' '.join(chain(args, (k for k, v in kwargs.items() if v)))
 
 
-def fields_requires(fields: List[Field]):
-    for field in fields:
-        for validator in field.validators:
-            if isinstance(validator, DataRequired):
-                return True
+# def fields_requires(fields: List[Field]):
+#     for field in fields:
+#         for validator in field.validators:
+#             if isinstance(validator, DataRequired):
+#                 return True
+
 
 CATEGORY = str
 MESSAGE = str
 
 
-template_globals = {update, classes, fields_requires, list}
+# template_globals = {update, classes, fields_requires, list}
 
 
 def init_app(app: Flask) -> None:
     for filter_ in filters:
         app.add_template_filter(filter_)
 
-    for template_global in template_globals:
-        app.add_template_global(template_global)
+    # for template_global in template_globals:
+    #     app.add_template_global(template_global)
