@@ -1,3 +1,4 @@
+import os
 import uuid as py_uuid
 
 from sqlalchemy import String
@@ -5,6 +6,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ex.api import BaseModel
+from was.config import static_images_path
 from was.model import Model
 
 
@@ -47,3 +49,16 @@ class Asset(Model):
             download_url=self.download_url,
             content_type=self.content_type,
         )
+
+    @staticmethod
+    def get_file_path(filename: str) -> str:
+        file_path = ''
+        directories = os.listdir(static_images_path)
+        for directory in directories:
+            dir_path = os.path.join(static_images_path, directory)
+            files = os.listdir(dir_path)
+            for file in files:
+                if file == filename:
+                    file_path = os.path.join(dir_path, file)
+
+        return file_path
