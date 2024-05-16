@@ -24,6 +24,7 @@ dependencies:
   flutter_secure_storage: ^9.1.1
   collection: ^1.18.0
   flutter_easyloading: ^3.0.5
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:
@@ -41,3 +42,26 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - asset/img/misc/
+    - asset/img/food/
+    - asset/svg/icon/
+    - asset/img/logo/
+    - asset/rive/
+    - .env
+
+  fonts:
+    - family: NotoSans
+      fonts:
+        - asset: asset/fonts/NotoSansKR-Black.otf
+          weight: 900
+        - asset: asset/fonts/NotoSansKR-Bold.otf
+          weight: 700
+        - asset: asset/fonts/NotoSansKR-Medium.otf
+          weight: 500
+        - asset: asset/fonts/NotoSansKR-Regular.otf
+          weight: 400
+        - asset: asset/fonts/NotoSansKR-Light.otf
+          weight: 300
+        - asset: asset/fonts/NotoSansKR-Thin.otf
+          weight: 100
