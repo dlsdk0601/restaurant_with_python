@@ -12,7 +12,9 @@ class Application extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final darkThemeData = ThemeData();
+    final darkThemeData = ThemeData(
+      fontFamily: 'NotoSans',
+    );
     final themeData = darkThemeData.copyWith();
 
     return MaterialApp.router(
