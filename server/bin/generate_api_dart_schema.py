@@ -37,7 +37,7 @@ def generate() -> None:
         }
     """)
 
-    api_schemas = list(flatten([i.req, i.res_data] for i in application.api.app.export_api_schema()))
+    api_schemas = list(flatten([i.req, i.res_data] for i in application.blueprints.app.export_api_schema()))
     models: set[Type[BaseModel | Enum | GenericModel]] = get_flat_models_from_models(api_schemas)
     models.add(ResStatus)
     for model in sorted(models, key=lambda x: x.__name__):

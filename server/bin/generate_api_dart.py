@@ -13,7 +13,7 @@ def generate():
     print('class Api extends ApiBase {')
     print('  Api(super.server);')
 
-    for schema in application.api.app.export_api_schema():
+    for schema in application.blueprints.app.export_api_schema():
         paths = ','.join(f"'{x}'" for x in schema.url.removeprefix('/').split('/'))
         print(f"""
             Future<{schema.res_data.__name__}?> {camelcase(schema.endpoint)}({schema.req.__name__} req) => 

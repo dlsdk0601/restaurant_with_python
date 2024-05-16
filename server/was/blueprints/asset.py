@@ -2,7 +2,7 @@ from uuid import UUID
 
 from flask import abort, send_file
 
-from was.blueprints.api import app
+from was.blueprints import app
 from was.model import db
 from was.model.asset import Asset
 

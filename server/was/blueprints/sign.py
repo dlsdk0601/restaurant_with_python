@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 from sqlalchemy import func
 
 from ex.api import BaseModel, Res, err, ok
-from was.blueprints.api import app, bg
+from was.blueprints import app, bg
 from was.model import db
 from was.model.user import User, UserAuthentication
 
