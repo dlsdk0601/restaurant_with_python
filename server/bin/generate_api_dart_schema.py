@@ -6,8 +6,8 @@ from uuid import UUID
 
 from more_itertools import flatten
 from pydantic import BaseModel
+from pydantic.fields import ModelField
 from pydantic.schema import get_flat_models_from_models
-from pydantic.v1.fields import ModelField
 from stringcase import camelcase
 
 from ex.api import ResStatus, GenericModel
