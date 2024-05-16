@@ -1,3 +1,16 @@
-.env
-.idea/
+# python
 venv/
+*.egg-info
+__pycache__
+
+# pycharm
+.idea/
+
+# mypy
+.dmypy.json
+
+#dotenv
+.env
+
+# tmp
+tmp
