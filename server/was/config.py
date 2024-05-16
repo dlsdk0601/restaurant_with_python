@@ -34,3 +34,4 @@ if SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
 
 was_root_path: Path = Path(__file__).resolve().parent.parent
 was_tmp_path: Path = was_root_path / "tmp"
+static_images_path = (Path(__file__).parent.parent / 'was' / 'static' / 'assets' / 'images').resolve()

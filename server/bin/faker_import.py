@@ -7,11 +7,10 @@ from faker import Faker
 
 from ex.faker_ex import faker_unique, faker_call
 from was.application import app
+from was.config import static_images_path
 from was.model import db
 from was.model.asset import Asset
 from was.model.user import User
-
-static_images_path = (Path(__file__).parent.parent / 'was' / 'static' / 'assets' / 'images').resolve()
 
 
 def main() -> None:
