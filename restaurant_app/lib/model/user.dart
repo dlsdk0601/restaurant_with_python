@@ -40,6 +40,8 @@ class UserModel extends ChangeNotifier {
     //
     // notifyListeners();
   }
+
+  Future<void> signOut() async {}
 }
 
 final userModel = UserModel();
