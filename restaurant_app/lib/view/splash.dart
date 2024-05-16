@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:restaurant_app/color.dart';
+import 'package:restaurant_app/view/default_layout.dart';
 import 'package:restaurant_app/view/intro.dart';
 
 import '../config.dart';
@@ -77,8 +79,26 @@ class _SplashImageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text("TODO :: 이미지 확인 "),
+    return DefaultLayout(
+      backgroundColor: PRIMARY_COLOR,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'asset/img/logo/logo.png',
+              width: MediaQuery.of(context).size.width / 2,
+            ),
+            const SizedBox(
+              height: 16.0,
+            ),
+            const CircularProgressIndicator(
+              color: Colors.white,
+            )
+          ],
+        ),
+      ),
     );
   }
 }
