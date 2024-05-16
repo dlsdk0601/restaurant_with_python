@@ -24,13 +24,11 @@ mypy-check:
 	venv/bin/dmypy run -- was ex bin
 
 code-gen:
-	#(source venv/bin/activate && $(MAKE) '_code-gen')
+	(source venv/bin/activate && $(MAKE) '_code-gen')
 
 _code-gen:
-	python bin/generate_api_ts_schema.py | python bin/tee.py ../tris-addee2-admin/src/api/schema.g.ts
-	python bin/generate_api_ts.py | python bin/tee.py ../tris-addee2-admin/src/api/api.g.ts
-	python bin/generate_api_dart_schema.py | (type dart > /dev/null && dart format || cat) | python bin/tee.py ../app/lib/api/schema.gen.dart
-	python bin/generate_api_dart.py | (type dart > /dev/null && dart format || cat) | python bin/tee.py ../app/lib/api/api.gen.dart
+	python bin/generate_api_dart_schema.py | (type dart > /dev/null && dart format || cat) | python bin/tee.py ../restaurant_app/lib/api/schema.gen.dart
+	python bin/generate_api_dart.py | (type dart > /dev/null && dart format || cat) | python bin/tee.py ../restaurant_app/lib/api/api.gen.dart
 
 # 개발용 테스트 데이터 DB 생성
 faker-import:
