@@ -7,6 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from ex.py.enum_ex import StringEnum
 from was.model import Model
 from was.model.asset import Asset
+from was.model.tag import Tag, RestaurantTag
 
 
 class RestaurantPriceRange(StringEnum):
@@ -31,6 +32,11 @@ class Restaurant(Model):
 
     # 어드민을 제작하면 detail 보다는 description 이 맞고, varchar 보다는 Text 타입이 맞다.
     detail: Mapped[str] = mapped_column(String(512), nullable=False, comment='가게 설명')
+    tags: Mapped[list[Tag]] = relationship(Tag, secondary=RestaurantTag, uselist=True)
+
+    __table_args__ = (
+        {'comment': '레스토랑'},
+    )
 
 
 """
