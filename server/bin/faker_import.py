@@ -11,6 +11,7 @@ from was.config import static_images_path
 from was.model import db
 from was.model.asset import Asset
 from was.model.restaurant import Restaurant, RestaurantPriceRange
+from was.model.tag import Tag
 from was.model.user import User
 
 
@@ -18,7 +19,8 @@ def main() -> None:
     importers: list[Callable[[Faker], None]] = [
         _import_asset,
         _import_user,
-        _import_restaurant
+        _import_tag,
+        _import_restaurant,
     ]
 
     for importer in importers:
@@ -86,10 +88,29 @@ def _import_restaurant(faker: Faker) -> None:
             main_image_pk=fetch_asset_pk(faker)
         )
 
+        tags: set[Tag] = set()
+        for _ in range(10):
+            tags.add(fetch_tag(faker))
+        restaurant.tags = list(tags)
+
         return restaurant
 
     restaurants = faker_call(faker, new_restaurant, 73)
     db.session.add_all(restaurants)
+    db.session.commit()
+
+
+def _import_tag(faker: Faker) -> None:
+    names: set[str] = set()
+
+    def new_tag():
+        name = faker_unique(faker.word, names)
+        tag = Tag(name=name)
+        return tag
+
+    tags = faker_call(faker, new_tag, 200)
+
+    db.session.add_all(tags)
     db.session.commit()
 
 
@@ -134,6 +155,48 @@ def fetch_asset_pks():
 
 def fetch_asset_pk(faker: Faker):
     return faker.random_element(fetch_asset_pks())
+
+
+_restaurant_pks: list[int] = []
+
+
+def fetch_restaurant_pks():
+    global _restaurant_pks
+    if not _restaurant_pks:
+        _restaurant_pks = [x.pk for x in db.session.execute(db.select(Restaurant)).scalars()]
+    return _restaurant_pks
+
+
+def fetch_restaurant_pk(faker: Faker):
+    return faker.random_element(fetch_restaurant_pks())
+
+
+_tag_pks: list[int] = []
+
+
+def fetch_tag_pks():
+    global _tag_pks
+    if not _tag_pks:
+        _tag_pks = [x.pk for x in db.session.execute(db.select(Tag)).scalars()]
+    return _tag_pks
+
+
+def fetch_tag_pk(faker: Faker):
+    return faker.random_element(fetch_tag_pks())
+
+
+_tags: list[Tag] = []
+
+
+def fetch_tags():
+    global _tags
+    if not _tags:
+        _tags = [x for x in db.session.execute(db.select(Tag)).scalars()]
+    return _tags
+
+
+def fetch_tag(faker: Faker):
+    return faker.random_element(fetch_tags())
 
 
 if __name__ == '__main__':
