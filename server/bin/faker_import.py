@@ -1,6 +1,6 @@
 import mimetypes
 import os
-from pathlib import Path
+from collections import OrderedDict
 from typing import Callable
 
 from faker import Faker
@@ -10,6 +10,7 @@ from was.application import app
 from was.config import static_images_path
 from was.model import db
 from was.model.asset import Asset
+from was.model.restaurant import Restaurant, RestaurantPriceRange
 from was.model.user import User
 
 
@@ -17,6 +18,7 @@ def main() -> None:
     importers: list[Callable[[Faker], None]] = [
         _import_asset,
         _import_user,
+        _import_restaurant
     ]
 
     for importer in importers:
@@ -67,6 +69,30 @@ def _import_user(faker: Faker) -> None:
     db.session.commit()
 
 
+def _import_restaurant(faker: Faker) -> None:
+    names: set[str] = set()
+
+    def new_restaurant():
+        name = faker_unique(faker.company, names)
+        price_range = faker.random_element(OrderedDict([
+            (RestaurantPriceRange.cheap, 0.3),
+            (RestaurantPriceRange.medium, 0.3),
+            (RestaurantPriceRange.expensive, 0.4),
+        ]))
+        restaurant = Restaurant(
+            name=name, price_range=price_range, rating=faker.pyfloat(left_digits=1, right_digits=2, positive=True),
+            rating_count=faker.random_int(min=0, max=100), delivery_time=faker.random_int(min=10, max=40),
+            delivery_fee=faker.random_int(min=0, max=3000), detail=faker.paragraph(nb_sentences=5),
+            main_image_pk=fetch_asset_pk(faker)
+        )
+
+        return restaurant
+
+    restaurants = faker_call(faker, new_restaurant, 73)
+    db.session.add_all(restaurants)
+    db.session.commit()
+
+
 _users: list[User] = []
 
 
@@ -93,6 +119,21 @@ def fetch_user_pks():
 
 def fetch_user_pk(faker: Faker):
     return faker.random_element(fetch_user_pks())
+
+
+_asset_pks: list[int] = []
+
+
+def fetch_asset_pks():
+    global _asset_pks
+    if not _asset_pks:
+        _asset_pks = [x.pk for x in db.session.execute(db.select(Asset)).scalars()]
+
+    return _asset_pks
+
+
+def fetch_asset_pk(faker: Faker):
+    return faker.random_element(fetch_asset_pks())
 
 
 if __name__ == '__main__':
