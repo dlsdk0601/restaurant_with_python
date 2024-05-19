@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:restaurant_app/screen/home_screen.dart';
 import 'package:restaurant_app/screen/intro.dart';
+import 'package:restaurant_app/screen/sign_in_screen.dart';
 
 part 'router.g.dart';
 
@@ -12,6 +14,27 @@ class IntroRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) {
     return const IntroScreen();
   }
+}
+
+@TypedGoRoute<HomeRoute>(
+  path: '/',
+  routes: [
+    TypedGoRoute<SignInRoute>(path: 'sign-in'),
+  ],
+)
+class HomeRoute extends GoRouteData {
+  const HomeRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
+}
+
+class SignInRoute extends GoRouteData {
+  const SignInRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SignInScreen();
 }
 
 const defaultLocation = '';
