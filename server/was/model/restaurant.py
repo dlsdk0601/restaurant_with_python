@@ -42,6 +42,9 @@ class Restaurant(Model):
                                                      back_populates='restaurant',
                                                      )
 
+    def tag_list(self) -> list[str]:
+        return list(map(lambda tag: tag.name, self.tags))
+
     __table_args__ = (
         {'comment': '레스토랑'},
     )
