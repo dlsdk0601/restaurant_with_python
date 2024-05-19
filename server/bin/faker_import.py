@@ -10,6 +10,7 @@ from was.application import app
 from was.config import static_images_path
 from was.model import db
 from was.model.asset import Asset
+from was.model.product import Product
 from was.model.restaurant import Restaurant, RestaurantPriceRange
 from was.model.tag import Tag
 from was.model.user import User
@@ -21,6 +22,7 @@ def main() -> None:
         _import_user,
         _import_tag,
         _import_restaurant,
+        _import_product,
     ]
 
     for importer in importers:
@@ -74,7 +76,7 @@ def _import_user(faker: Faker) -> None:
 def _import_restaurant(faker: Faker) -> None:
     names: set[str] = set()
 
-    def new_restaurant():
+    def new_restaurant() -> Restaurant:
         name = faker_unique(faker.company, names)
         price_range = faker.random_element(OrderedDict([
             (RestaurantPriceRange.cheap, 0.3),
@@ -88,10 +90,10 @@ def _import_restaurant(faker: Faker) -> None:
             main_image_pk=fetch_asset_pk(faker)
         )
 
-        tags: set[Tag] = set()
+        tags: list[Tag] = []
         for _ in range(10):
-            tags.add(fetch_tag(faker))
-        restaurant.tags = list(tags)
+            tags.append(fetch_tag(faker))
+        restaurant.tags = tags
 
         return restaurant
 
@@ -111,6 +113,25 @@ def _import_tag(faker: Faker) -> None:
     tags = faker_call(faker, new_tag, 200)
 
     db.session.add_all(tags)
+    db.session.commit()
+
+
+def _import_product(faker: Faker) -> None:
+    names: set[str] = set()
+
+    def new_product() -> Product:
+        name = faker_unique(faker.company, names)
+        product = Product(
+            name=name, main_image_pk=fetch_asset_pk(faker),
+            detail=faker.paragraph(nb_sentences=5),
+            price=faker.random_int(min=8000, max=20000),
+            restaurant_pk=fetch_restaurant_pk(faker)
+        )
+
+        return product
+
+    products = faker_call(faker, new_product, 200)
+    db.session.add_all(products)
     db.session.commit()
 
 
