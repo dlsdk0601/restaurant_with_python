@@ -9,8 +9,8 @@ from was.model.asset import Asset
 
 @app.route('/asset/<uuid:uuid>/<filename>')
 def asset_show(uuid: UUID, filename: str):
-    asset: Asset | None = db.excute(
-        db.select(Asset).filter_by(uuid=uuid, filename=filename)
+    asset: Asset | None = db.session.execute(
+        db.select(Asset).filter_by(uuid=uuid, name=filename)
     ) \
         .scalar_one_or_none()
 
