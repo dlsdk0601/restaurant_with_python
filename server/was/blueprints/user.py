@@ -9,6 +9,7 @@ class UserShowReq(BaseModel):
 
 
 class UserShowRes(BaseModel):
+    pk: int
     email: str
     name: str
     image: Asset.Bsset
@@ -21,7 +22,7 @@ def user_show(req: UserShowReq) -> Res[UserShowRes]:
     if user is None:
         return err('유저 정보가 조회되지 않습니다.')
 
-    return ok(UserShowRes(email=user.email, name=user.name, image=user.image.to_bsset()))
+    return ok(UserShowRes(pk=user.pk, email=user.email, name=user.name, image=user.image.to_bsset()))
 
 
 class BasketListReq(BaseModel):
