@@ -1,4 +1,5 @@
 from enum import auto
+from typing import TYPE_CHECKING
 
 from sqlalchemy import String, ForeignKey, Float, Integer
 from sqlalchemy.dialects import postgresql
@@ -8,6 +9,9 @@ from ex.py.enum_ex import StringEnum
 from was.model import Model
 from was.model.asset import Asset
 from was.model.tag import Tag, RestaurantTag
+
+if TYPE_CHECKING:
+    from was.model.product import Product
 
 
 class RestaurantPriceRange(StringEnum):
@@ -34,15 +38,10 @@ class Restaurant(Model):
     detail: Mapped[str] = mapped_column(String(512), nullable=False, comment='가게 설명')
     tags: Mapped[list[Tag]] = relationship(Tag, secondary=RestaurantTag, uselist=True)
 
+    products: Mapped[list['Product']] = relationship('Product',
+                                                     back_populates='restaurant',
+                                                     )
+
     __table_args__ = (
         {'comment': '레스토랑'},
     )
-
-
-"""
-{
-  "tags": [
-    "신규",
-    "세일중"
-  ],
-"""
