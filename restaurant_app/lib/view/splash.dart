@@ -36,9 +36,17 @@ class SplashView extends HookConsumerWidget {
 
         if (userModel.userInfo == null) {
           if (context.mounted) {
-            goRouter.go(const IntroRoute().location);
+            goRouter.go(const SignInRoute().location);
           } else {
             logger.w('cannot move to intro screen. context is not mounted.');
+          }
+        }
+
+        if (config.splashFadeIn) {
+          final endAt = DateTime.now();
+          final wait = const Duration(seconds: 1) - endAt.difference(startAt);
+          if (wait > Duration.zero) {
+            await Future.delayed(wait);
           }
         }
 
