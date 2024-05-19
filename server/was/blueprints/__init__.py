@@ -99,7 +99,7 @@ def before_request() -> Response | None:
         require_access_token = True
         match ((request.endpoint or '').split('.', maxsplit=2)):
             case [_, endpoint]:
-                if endpoint in ['sign_in']:
+                if endpoint in ['sign_in', 'asset_show']:
                     require_access_token = False
             case _:
                 pass
