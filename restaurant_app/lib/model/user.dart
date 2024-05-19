@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:restaurant_app/api/schema.gen.dart';
 import 'package:restaurant_app/model/storage.dart';
 
-import '../main.dart';
+import '../globals.dart';
 
 part 'user.freezed.dart';
 
@@ -28,17 +29,17 @@ class UserModel extends ChangeNotifier {
   }
 
   Future<void> validateAccessToken() async {
-    // final re = await api.userAccessTokenValidate(const UserAccessTokenValidateReq());
-    // final user = re?.user;
-    // if (user == null) {
-    //   accessToken = null;
-    //   notifyListeners();
-    //   return;
-    // }
-    //
-    // userInfo = UserInfo(user.pk, user.name);
-    //
-    // notifyListeners();
+    final res = await api.userShow(const UserShowReq());
+
+    if (res == null) {
+      accessToken = null;
+      notifyListeners();
+      return;
+    }
+
+    userInfo = UserInfo(res.pk, res.name);
+
+    notifyListeners();
   }
 
   Future<void> signOut() async {}
