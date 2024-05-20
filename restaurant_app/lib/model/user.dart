@@ -37,18 +37,23 @@ class UserModel extends ChangeNotifier {
       return;
     }
 
-    userInfo = UserInfo(res.pk, res.name);
+    userInfo = UserInfo(res.pk, res.email, res.name, res.image);
 
     notifyListeners();
   }
 
   Future<void> signOut() async {}
+
+  Future<void> setAccessToken(String accessToken) async {
+    this.accessToken = accessToken;
+    await validateAccessToken();
+    await storage.writeAccessToken(this.accessToken);
+  }
 }
 
 final userModel = UserModel();
 
 @freezed
 class UserInfo with _$UserInfo {
-  // TODO :: user show 에 따라 바꿀 것.
-  factory UserInfo(int pk, String name) = _UserInfo;
+  factory UserInfo(int pk, String email, String name, Bsset bsset) = _UserInfo;
 }
