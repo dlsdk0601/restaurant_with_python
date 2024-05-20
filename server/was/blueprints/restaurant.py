@@ -39,7 +39,7 @@ class RestaurantListRes(BaseModel):
 def restaurant_list(req: RestaurantListReq) -> Res[RestaurantListRes]:
     q = db.select(
         Restaurant
-    ).order_by(RestaurantListResItem.pk)
+    ).order_by(Restaurant.pk)
 
     pagination = api_paginate(q, page=req.page, map_=RestaurantListResItem.from_model)
 
