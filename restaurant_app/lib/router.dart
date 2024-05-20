@@ -18,9 +18,6 @@ class IntroRoute extends GoRouteData {
 
 @TypedGoRoute<HomeRoute>(
   path: '/',
-  routes: [
-    TypedGoRoute<SignInRoute>(path: 'sign-in'),
-  ],
 )
 class HomeRoute extends GoRouteData {
   const HomeRoute();
@@ -29,6 +26,9 @@ class HomeRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 
+@TypedGoRoute<SignInRoute>(
+  path: '/sign-in',
+)
 class SignInRoute extends GoRouteData {
   const SignInRoute();
 
