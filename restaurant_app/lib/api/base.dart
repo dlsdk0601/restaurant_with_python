@@ -106,5 +106,6 @@ abstract class ApiBase {
 
 void confirm(String text) {
   // TODO :: confirm context 완성
+  print('ERROR:::: $text');
   // throw Exception;
 }
