@@ -68,7 +68,7 @@ def _import_user(faker: Faker) -> None:
 
     # test 계정
     users[0].email = 'test'
-    users[0].password = '1234'
+    users[0].password = User.hash_password('1234')
     db.session.add_all(users)
     db.session.commit()
 
