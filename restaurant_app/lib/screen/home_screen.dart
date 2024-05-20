@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/color.dart';
+import 'package:restaurant_app/screen/restaurant_screen.dart';
 import 'package:restaurant_app/view/default_layout.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,6 +15,24 @@ class _HomeScreenState extends State<HomeScreen>
   int index = 0;
 
   late TabController tabController;
+  final List<_NavigationMenu> menus = const [
+    _NavigationMenu(
+      icon: Icons.home_outlined,
+      name: '홈',
+    ),
+    _NavigationMenu(
+      icon: Icons.fastfood_outlined,
+      name: '음식',
+    ),
+    _NavigationMenu(
+      icon: Icons.receipt_long_outlined,
+      name: '주문',
+    ),
+    _NavigationMenu(
+      icon: Icons.person_outline,
+      name: '프로필',
+    ),
+  ];
 
   @override
   void initState() {
@@ -38,42 +57,31 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      title: '딜리버리',
+      title: menus[index].name,
       bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: PRIMARY_COLOR,
-          unselectedItemColor: BODY_TEXT_COLOR,
-          selectedFontSize: 10,
-          unselectedFontSize: 10,
-          type: BottomNavigationBarType.shifting,
-          onTap: (int index) {
-            tabController.animateTo(index);
-          },
-          currentIndex: index,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: '홈',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.fastfood_outlined),
-              label: '음식',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.receipt_long_outlined),
-              label: '주문',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: '프로필',
-            ),
-          ]),
+        selectedItemColor: PRIMARY_COLOR,
+        unselectedItemColor: BODY_TEXT_COLOR,
+        selectedFontSize: 10,
+        unselectedFontSize: 10,
+        type: BottomNavigationBarType.shifting,
+        onTap: (int index) {
+          tabController.animateTo(index);
+        },
+        currentIndex: index,
+        items: menus
+            .map(
+              (e) => BottomNavigationBarItem(
+                icon: Icon(e.icon),
+                label: e.name,
+              ),
+            )
+            .toList(),
+      ),
       child: TabBarView(
         physics: const NeverScrollableScrollPhysics(),
         controller: tabController,
         children: const [
-          Center(
-            child: Text("레스토랑"),
-          ),
+          RestaurantScreen(),
           Center(
             child: Text("제품"),
           ),
@@ -87,4 +95,14 @@ class _HomeScreenState extends State<HomeScreen>
       ),
     );
   }
+}
+
+class _NavigationMenu {
+  final String name;
+  final IconData icon;
+
+  const _NavigationMenu({
+    required this.name,
+    required this.icon,
+  });
 }
