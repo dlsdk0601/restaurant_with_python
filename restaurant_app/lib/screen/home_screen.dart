@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/color.dart';
-import 'package:restaurant_app/screen/restaurant_screen.dart';
+import 'package:restaurant_app/screen/restaurant/restaurant_screen.dart';
 import 'package:restaurant_app/view/default_layout.dart';
 
 class HomeScreen extends StatefulWidget {
