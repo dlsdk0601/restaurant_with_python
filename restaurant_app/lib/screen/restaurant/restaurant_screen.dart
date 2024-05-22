@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:restaurant_app/color.dart';
 import 'package:restaurant_app/ex/hook.dart';
+import 'package:restaurant_app/router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../api/schema.gen.dart';
-import '../globals.dart';
+import '../../api/schema.gen.dart';
+import '../../globals.dart';
 
 part 'restaurant_screen.freezed.dart';
 part 'restaurant_screen.g.dart';
@@ -63,8 +65,14 @@ class RestaurantScreen extends HookConsumerWidget {
           controller: pageController,
           itemCount: model.restaurantList.length,
           itemBuilder: (_, index) {
-            return _RestaurantListItem.fromModel(
-              model: model.restaurantList[index],
+            return GestureDetector(
+              onTap: () {
+                final pk = model.restaurantList[index].pk;
+                context.go(RestaurantShowRoute(pk).location);
+              },
+              child: RestaurantListItemView.fromModel(
+                model: model.restaurantList[index],
+              ),
             );
           },
           separatorBuilder: (_, index) {
@@ -78,7 +86,7 @@ class RestaurantScreen extends HookConsumerWidget {
   }
 }
 
-class _RestaurantListItem extends StatelessWidget {
+class RestaurantListItemView extends StatelessWidget {
   final Widget image;
   final String name;
   final List<String> tags;
@@ -92,7 +100,7 @@ class _RestaurantListItem extends StatelessWidget {
 
   final String? heroKey;
 
-  const _RestaurantListItem({
+  const RestaurantListItemView({
     super.key,
     required this.image,
     required this.name,
@@ -106,10 +114,10 @@ class _RestaurantListItem extends StatelessWidget {
     this.heroKey,
   });
 
-  factory _RestaurantListItem.fromModel({
+  factory RestaurantListItemView.fromModel({
     required RestaurantListResItem model,
   }) =>
-      _RestaurantListItem(
+      RestaurantListItemView(
         image: Image.network(
           'http://localhost:5001/api${model.bsset.url}',
           fit: BoxFit.cover,
