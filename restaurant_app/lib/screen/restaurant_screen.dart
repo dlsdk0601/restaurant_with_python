@@ -22,8 +22,27 @@ class RestaurantScreen extends HookConsumerWidget {
     final model = ref.watch(_modelStateProvider);
 
     useEffect(() {
+      bool isFetching = false;
+
+      void controllerListener() async {
+        if (pageController.offset >
+            pageController.position.maxScrollExtent - 300) {
+          if (!isFetching) {
+            isFetching = true;
+            await ref.read(_modelStateProvider.notifier).onNext();
+            isFetching = false;
+          }
+        }
+      }
+
+      // add listener
+      Future.microtask(() => pageController.addListener(controllerListener));
+      // init
       Future.microtask(() => ref.read(_modelStateProvider.notifier).init());
-      return null;
+      return () {
+        pageController.removeListener(controllerListener);
+        pageController.dispose();
+      };
     }, []);
 
     if (!model.initialized) {
@@ -264,7 +283,7 @@ class _ModelState extends _$ModelState with InitModel {
   }
 
   Future<void> onNext() async {
-    if (!state.isFetching) {
+    if (state.isFetching) {
       return;
     }
 
