@@ -26,7 +26,7 @@ class User(Model):
     image_pk: Mapped[int] = mapped_column(ForeignKey(Asset.pk), nullable=False, comment='ASSET - FK')
     image: Mapped[Asset] = relationship()
 
-    cart: Mapped['Cart'] = relationship('Cart', back_populates='cart')
+    cart: Mapped['Cart'] = relationship('Cart', back_populates='user')
 
     @staticmethod
     def hash_password(password: str) -> str:
