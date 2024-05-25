@@ -321,6 +321,7 @@ class _ModelState extends _$ModelState with InitModel {
       isFetching: false,
       restaurantList: [...state.restaurantList, ...list],
       hasNext: res.list.hasNext,
+      page: res.list.page,
     );
   }
 
