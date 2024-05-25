@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/color.dart';
+import 'package:restaurant_app/screen/product/product_list_screen.dart';
 import 'package:restaurant_app/screen/restaurant/restaurant_screen.dart';
 import 'package:restaurant_app/view/default_layout.dart';
 
@@ -82,9 +83,7 @@ class _HomeScreenState extends State<HomeScreen>
         controller: tabController,
         children: const [
           RestaurantScreen(),
-          Center(
-            child: Text("제품"),
-          ),
+          ProductListScreen(),
           Center(
             child: Text("주문"),
           ),
