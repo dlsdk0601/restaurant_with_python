@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy import String, ForeignKey, DateTime, func, Boolean
@@ -12,6 +13,9 @@ from was import config
 from was.model import Model
 from was.model.asset import Asset
 
+if TYPE_CHECKING:
+    from was.model.cart import Cart
+
 
 class User(Model):
     pk: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, comment='PK')
@@ -21,6 +25,8 @@ class User(Model):
 
     image_pk: Mapped[int] = mapped_column(ForeignKey(Asset.pk), nullable=False, comment='ASSET - FK')
     image: Mapped[Asset] = relationship()
+
+    cart: Mapped['Cart'] = relationship('Cart', back_populates='cart')
 
     @staticmethod
     def hash_password(password: str) -> str:
