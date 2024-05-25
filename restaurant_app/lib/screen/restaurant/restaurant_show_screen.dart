@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:badges/badges.dart';
+import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:restaurant_app/api/schema.gen.dart';
+import 'package:restaurant_app/color.dart';
 import 'package:restaurant_app/screen/restaurant/restaurant_screen.dart';
 import 'package:restaurant_app/view/default_layout.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -11,8 +13,9 @@ import '../../globals.dart';
 import '../../view/product_card_view.dart';
 
 part 'restaurant_show_screen.freezed.dart';
-
 part 'restaurant_show_screen.g.dart';
+
+typedef OnAddCart = Future<void> Function(int);
 
 class RestaurantShowScreen extends HookConsumerWidget {
   const RestaurantShowScreen({super.key, required this.pk});
@@ -36,17 +39,39 @@ class RestaurantShowScreen extends HookConsumerWidget {
 
     return DefaultLayout(
       title: model.restaurant!.name,
-      // TODO :: floating 버튼으로 장바구니 추가
-      // floatingActionButton
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // TODO :: 장바구니 페이지로
+          // context.go()
+        },
+        backgroundColor: PRIMARY_COLOR,
+        child: Badge(
+          badgeContent: Text(
+            model.cartCount.toString(),
+            style: const TextStyle(
+              color: PRIMARY_COLOR,
+              fontSize: 10.0,
+            ),
+          ),
+          badgeStyle: const BadgeStyle(
+            badgeColor: Colors.white,
+          ),
+          child: const Icon(Icons.shopping_basket_outlined),
+        ),
+      ),
       child: CustomScrollView(
         controller: pageController,
         slivers: [
           renderTop(model: model.restaurant!),
           renderLabel(),
           renderProducts(
-            products: model.restaurant!.products,
-            restaurant: model.restaurant!,
-          ),
+              products: model.restaurant!.products,
+              restaurant: model.restaurant!,
+              onAddCart: (int productPk) async {
+                await ref
+                    .read(_modelStateProvider.notifier)
+                    .onAddCart(productPk);
+              }),
         ],
       ),
     );
@@ -73,6 +98,7 @@ class RestaurantShowScreen extends HookConsumerWidget {
   SliverPadding renderProducts({
     required List<RestaurantShowProductListItem> products,
     required RestaurantShowRes restaurant,
+    required OnAddCart onAddCart,
   }) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -82,8 +108,8 @@ class RestaurantShowScreen extends HookConsumerWidget {
             final model = products[index];
 
             return InkWell(
-              onTap: () {
-                // TODO :: 장바구니 추가
+              onTap: () async {
+                await onAddCart(model.pk);
               },
               child: Padding(
                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
@@ -118,6 +144,7 @@ class _ModelState extends _$ModelState {
         initialized: false,
         pk: null,
         restaurant: null,
+        cartCount: 0,
       );
 
   Future<void> init(int pk) async {
@@ -131,6 +158,19 @@ class _ModelState extends _$ModelState {
       initialized: true,
       restaurant: res,
       pk: res.pk,
+      cartCount: res.cartCount,
+    );
+  }
+
+  Future<void> onAddCart(int productPk) async {
+    final res = await api.cartAdd(CartAddReq(productPk: productPk));
+
+    if (res == null) {
+      return;
+    }
+
+    state = state.copyWith(
+      cartCount: res.cartCount,
     );
   }
 }
@@ -141,5 +181,6 @@ class _Model with _$Model {
     required bool initialized,
     required int? pk,
     required RestaurantShowRes? restaurant,
+    required int cartCount,
   }) = __Model;
 }
