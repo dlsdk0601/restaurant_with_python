@@ -37,8 +37,7 @@ class UserModel extends ChangeNotifier {
       return;
     }
 
-    userInfo = UserInfo(res.pk, res.email, res.name, res.image);
-
+    userInfo = UserInfo(res.pk, res.email, res.name, res.image, res.cartCount);
     notifyListeners();
   }
 
@@ -55,5 +54,11 @@ final userModel = UserModel();
 
 @freezed
 class UserInfo with _$UserInfo {
-  factory UserInfo(int pk, String email, String name, Bsset bsset) = _UserInfo;
+  factory UserInfo(
+    int pk,
+    String email,
+    String name,
+    Bsset bsset,
+    int cartCount,
+  ) = _UserInfo;
 }

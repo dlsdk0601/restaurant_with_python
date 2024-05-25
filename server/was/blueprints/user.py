@@ -1,6 +1,8 @@
 from ex.api import BaseModel, Res, err, ok
 from was.blueprints import app, bg
+from was.model import db
 from was.model.asset import Asset
+from was.model.cart import Cart
 from was.model.user import User
 
 
@@ -13,6 +15,7 @@ class UserShowRes(BaseModel):
     email: str
     name: str
     image: Asset.Bsset
+    cart_count: int
 
 
 @app.api()
@@ -22,7 +25,15 @@ def user_show(req: UserShowReq) -> Res[UserShowRes]:
     if user is None:
         return err('유저 정보가 조회되지 않습니다.')
 
-    return ok(UserShowRes(pk=user.pk, email=user.email, name=user.name, image=user.image.to_bsset()))
+    if user.cart is None:
+        cart = Cart(user=user)
+        db.session.add(cart)
+        db.session.commit()
+
+    return ok(UserShowRes(
+        pk=user.pk, email=user.email, name=user.name,
+        image=user.image.to_bsset(), cart_count=user.cart.total_count
+    ))
 
 
 class BasketListReq(BaseModel):
