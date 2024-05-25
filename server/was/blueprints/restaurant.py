@@ -1,6 +1,6 @@
 from ex.api import BaseModel, Res, ok, err
 from ex.sqlalchemy_ex import Pagination, api_paginate
-from was.blueprints import app
+from was.blueprints import app, bg
 from was.model import db
 from was.model.asset import Asset
 from was.model.product import Product
@@ -78,10 +78,14 @@ class RestaurantShowRes(BaseModel):
     delivery_fee: int
     detail: str
     products: list[RestaurantShowProductListItem]
+    cart_count: int
 
 
 @app.api()
 def restaurant_show(req: RestaurantShowReq) -> Res[RestaurantShowRes]:
+    if bg.user is None:
+        return err('로그인후 이용해주시기 바랍니다.')
+
     restaurant: Restaurant | None = db.session.execute(
         db.select(Restaurant).filter_by(pk=req.pk)
     ) \
@@ -95,5 +99,6 @@ def restaurant_show(req: RestaurantShowReq) -> Res[RestaurantShowRes]:
         tags=restaurant.tag_list(), price_range=restaurant.price_range, ratings=restaurant.rating,
         ratings_count=restaurant.rating_count, delivery_time=restaurant.delivery_time,
         delivery_fee=restaurant.delivery_fee, detail=restaurant.detail,
+        cart_count=bg.user.cart.total_count,
         products=list(map(lambda x: RestaurantShowProductListItem.from_model(x), restaurant.products))
     ))
