@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:restaurant_app/screen/cart/cart_screen.dart';
 import 'package:restaurant_app/screen/home_screen.dart';
 import 'package:restaurant_app/screen/product/product_list_screen.dart';
 import 'package:restaurant_app/screen/restaurant/restaurant_show_screen.dart';
@@ -12,6 +13,7 @@ part 'router.g.dart';
   routes: [
     TypedGoRoute<RestaurantShowRoute>(path: 'restaurant-show/:pk'),
     TypedGoRoute<ProductListRoute>(path: "product-list"),
+    TypedGoRoute<CartScreenRoute>(path: 'cart'),
   ],
 )
 class HomeRoute extends GoRouteData {
@@ -37,6 +39,13 @@ class ProductListRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ProductListScreen();
+}
+
+class CartScreenRoute extends GoRouteData {
+  const CartScreenRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const CartScreen();
 }
 
 @TypedGoRoute<SignInRoute>(
