@@ -33,6 +33,14 @@ class Cart(Model):
 
         return price
 
+    @hybrid_property
+    def total_delivery_fee(self) -> int:
+        total = 0
+        for item in self.cart_items:
+            total += item.product.restaurant.delivery_fee * item.count
+
+        return total
+
     __table_args__ = (
         {'comment': '장바구니'},
     )

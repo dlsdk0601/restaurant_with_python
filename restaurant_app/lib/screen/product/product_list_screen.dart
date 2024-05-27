@@ -3,13 +3,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:restaurant_app/color.dart';
 import 'package:restaurant_app/ex/hook.dart';
 import 'package:restaurant_app/router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../api/schema.gen.dart';
 import '../../globals.dart';
+import '../../view/product_list_item_view.dart';
 
 part 'product_list_screen.freezed.dart';
 part 'product_list_screen.g.dart';
@@ -79,102 +79,6 @@ class ProductListScreen extends HookConsumerWidget {
           },
         ),
       ),
-    );
-  }
-}
-
-class ProductListItemView extends StatelessWidget {
-  final int pk;
-  final Image image;
-  final String name;
-  final String detail;
-  final int price;
-
-  final VoidCallback? onRemove;
-  final VoidCallback? onAdd;
-
-  const ProductListItemView({
-    super.key,
-    required this.pk,
-    required this.image,
-    required this.name,
-    required this.detail,
-    required this.price,
-    this.onRemove,
-    this.onAdd,
-  });
-
-  factory ProductListItemView.fromProductModel({
-    required ProductListResItem model,
-    VoidCallback? onRemove,
-    VoidCallback? onAdd,
-  }) =>
-      ProductListItemView(
-        pk: model.pk,
-        image: Image.network(
-          'http://localhost:5001/api${model.image.url}',
-          width: 110,
-          height: 110,
-          fit: BoxFit.cover,
-        ),
-        name: model.name,
-        detail: model.detail,
-        price: model.price,
-        onAdd: onAdd,
-        onRemove: onRemove,
-      );
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        IntrinsicHeight(
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: image,
-              ),
-              const SizedBox(
-                width: 16.0,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Text(
-                      detail,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: const TextStyle(
-                        color: BODY_TEXT_COLOR,
-                        fontSize: 14.0,
-                      ),
-                    ),
-                    Text(
-                      "₩$price",
-                      textAlign: TextAlign.right,
-                      style: const TextStyle(
-                        color: PRIMARY_COLOR,
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        )
-      ],
     );
   }
 }
