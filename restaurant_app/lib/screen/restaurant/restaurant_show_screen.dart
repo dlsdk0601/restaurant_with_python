@@ -2,9 +2,11 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:restaurant_app/api/schema.gen.dart';
 import 'package:restaurant_app/color.dart';
+import 'package:restaurant_app/router.dart';
 import 'package:restaurant_app/screen/restaurant/restaurant_screen.dart';
 import 'package:restaurant_app/view/default_layout.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -41,8 +43,11 @@ class RestaurantShowScreen extends HookConsumerWidget {
       title: model.restaurant!.name,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO :: 장바구니 페이지로
-          // context.go()
+          if (context.mounted) {
+            context.go(
+              const CartScreenRoute().location,
+            );
+          }
         },
         backgroundColor: PRIMARY_COLOR,
         child: Badge(
