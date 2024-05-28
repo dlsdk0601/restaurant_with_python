@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:restaurant_app/color.dart';
 import 'package:restaurant_app/ex/hook.dart';
+import 'package:restaurant_app/router.dart';
 import 'package:restaurant_app/view/default_layout.dart';
 import 'package:restaurant_app/view/product_list_item_view.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -120,8 +122,9 @@ class CartScreen extends HookConsumerWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () async {
-                          //   TODO :: order api
-                          // 성공하면 orderDoneScreen 으로 실패하면 결제 실패 snackBar
+                          await ref
+                              .read(_modelStateProvider.notifier)
+                              .onAddOrder(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: PRIMARY_COLOR,
@@ -211,7 +214,44 @@ class _ModelState extends _$ModelState with InitModel {
     );
   }
 
-// TODO :: order API 추가
+  Future<void> onAddOrder(BuildContext context) async {
+    final req = AddOrderReq(
+      totalPrice: state.totalPrice + state.totalDeliveryFee,
+      products: state.carts
+          .map(
+            (e) => AddOrderProductListItem(
+              pk: e.productPk,
+              count: e.count,
+              price: e.price,
+            ),
+          )
+          .toList(),
+    );
+    final res = await api.addOrder(req);
+
+    if (res == null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("결제에 실패하였습니다."),
+          ),
+        );
+      }
+      return;
+    }
+
+    if (res.state == OrderState.FAIL && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("결제에 실패하였습니다."),
+        ),
+      );
+    }
+
+    if (res.state == OrderState.SUCCESS && context.mounted) {
+      context.replace(const OrderDoneRoute().location);
+    }
+  }
 }
 
 @freezed
