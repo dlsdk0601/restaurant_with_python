@@ -15,7 +15,12 @@ class Cart(Model):
     user_pk: Mapped[int] = mapped_column(ForeignKey(User.pk), nullable=False, comment='USER - FK')
     user: Mapped[User] = relationship()
 
-    cart_items: Mapped[list['CartItem']] = relationship('CartItem', back_populates='cart')
+    cart_items: Mapped[list['CartItem']] = relationship('CartItem', back_populates='cart',
+                                                        primaryjoin='and_(CartItem.cart_pk == Cart.pk, '
+                                                                    'CartItem.delete_at == None)',
+                                                        uselist=True,
+                                                        order_by='CartItem.create_at.desc()'
+                                                        )
 
     @hybrid_property
     def total_count(self) -> int:
