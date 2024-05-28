@@ -38,7 +38,7 @@ def cart_add(req: CartAddReq) -> Res[CartAddRes]:
 
     cart = bg.user.cart
     cart_item = db.session.execute(
-        db.select(CartItem).filter_by(product_pk=req.product_pk, cart_pk=cart.pk)
+        db.select(CartItem).filter_by(product_pk=req.product_pk, cart_pk=cart.pk, delete_at=None)
     ) \
         .scalar_one_or_none()
 
@@ -120,6 +120,11 @@ class CartListRes(BaseModel):
 def cart_list(req: CartListReq) -> Res[CartListRes]:
     if bg.user is None:
         return err('로그인 후 이용가능합니다.')
+
+    cart_items = db.session.execute(
+        db.select(CartItem).filter_by(cart_pk=bg.user.cart.pk, delete_at=None)
+    ) \
+        .all()
 
     return ok(
         CartListRes(
