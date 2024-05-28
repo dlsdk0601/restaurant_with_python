@@ -175,7 +175,7 @@ class _ModelState extends _$ModelState {
     }
 
     state = state.copyWith(
-      cartCount: res.cartCount,
+      cartCount: res.totalCount,
     );
   }
 }

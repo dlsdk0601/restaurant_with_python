@@ -190,7 +190,11 @@ class _ModelState extends _$ModelState with InitModel {
       return;
     }
 
-    initialized();
+    state = state.copyWith(
+      carts: res.carts,
+      totalPrice: res.totalPrice,
+      totalDeliveryFee: res.totalDeliveryFee,
+    );
   }
 
   Future<void> onRemove(int productPk) async {
@@ -200,10 +204,14 @@ class _ModelState extends _$ModelState with InitModel {
       return;
     }
 
-    initialized();
+    state = state.copyWith(
+      carts: res.carts,
+      totalPrice: res.totalPrice,
+      totalDeliveryFee: res.totalDeliveryFee,
+    );
   }
 
-  // TODO :: order API 추가
+// TODO :: order API 추가
 }
 
 @freezed
