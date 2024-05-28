@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:restaurant_app/screen/cart/cart_screen.dart';
 import 'package:restaurant_app/screen/home_screen.dart';
+import 'package:restaurant_app/screen/order/order_done_screen.dart';
 import 'package:restaurant_app/screen/product/product_list_screen.dart';
 import 'package:restaurant_app/screen/restaurant/restaurant_show_screen.dart';
 import 'package:restaurant_app/screen/sign_in_screen.dart';
@@ -63,6 +64,15 @@ class SignInRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SignInScreen();
+}
+
+@TypedGoRoute<OrderDoneRoute>(path: "/order-done")
+class OrderDoneRoute extends GoRouteData {
+  const OrderDoneRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const OrderDoneScreen();
 }
 
 const defaultLocation = '';
