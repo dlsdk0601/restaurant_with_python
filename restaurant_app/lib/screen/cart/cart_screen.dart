@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:restaurant_app/color.dart';
 import 'package:restaurant_app/ex/hook.dart';
 import 'package:restaurant_app/view/default_layout.dart';
 import 'package:restaurant_app/view/product_list_item_view.dart';
@@ -74,6 +75,61 @@ class CartScreen extends HookConsumerWidget {
                       );
                     },
                   ),
+                ),
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "장바구니 금액",
+                          style: TextStyle(
+                            color: BODY_TEXT_COLOR,
+                          ),
+                        ),
+                        Text("₩ ${model.totalPrice}")
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "배달비",
+                          style: TextStyle(
+                            color: BODY_TEXT_COLOR,
+                          ),
+                        ),
+                        if (model.carts.isNotEmpty)
+                          Text("₩ ${(model.totalDeliveryFee).toString()}")
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "총액",
+                          style: TextStyle(
+                            color: BODY_TEXT_COLOR,
+                          ),
+                        ),
+                        Text(
+                            "₩ ${(model.totalDeliveryFee + model.totalPrice).toString()}")
+                      ],
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          //   TODO :: order api
+                          // 성공하면 orderDoneScreen 으로 실패하면 결제 실패 snackBar
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: PRIMARY_COLOR,
+                        ),
+                        child: const Text("결제 하기"),
+                      ),
+                    )
+                  ],
                 )
               ],
             ),
@@ -146,6 +202,8 @@ class _ModelState extends _$ModelState with InitModel {
 
     initialized();
   }
+
+  // TODO :: order API 추가
 }
 
 @freezed
