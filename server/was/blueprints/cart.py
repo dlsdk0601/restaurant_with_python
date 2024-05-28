@@ -7,32 +7,56 @@ from was.model.asset import Asset
 from was.model.cart import CartItem
 
 
+class CartListResItem(BaseModel):
+    pk: int
+    image: Asset.Bsset
+    name: str
+    detail: str
+    price: int
+    count: int
+    product_pk: int
+
+    @classmethod
+    def from_model(cls, cart_item: CartItem) -> 'CartListResItem':
+        return CartListResItem(
+            pk=cart_item.pk, image=cart_item.product.main_image.to_bsset(), name=cart_item.product.name,
+            detail=cart_item.product.detail, price=cart_item.product.price, count=cart_item.count,
+            product_pk=cart_item.product_pk
+        )
+
+
+class CartRes(BaseModel):
+    total_price: int
+    total_delivery_fee: int
+    total_count: int
+    carts: list[CartListResItem]
+
+
+def cart_res() -> CartRes:
+    if bg.user is None:
+        return CartRes(
+            total_price=0, total_delivery_fee=0,
+            total_count=0, carts=[]
+        )
+
+    return CartRes(
+        total_price=bg.user.cart.total_price,
+        total_delivery_fee=bg.user.cart.total_delivery_fee,
+        total_count=bg.user.cart.total_count,
+        carts=list(map(lambda x: CartListResItem.from_model(x), bg.user.cart.cart_items))
+    )
+
+
 class GetCartCountReq(BaseModel):
     pass
-
-
-class GetCartCountRes(BaseModel):
-    cart_count: int
-
-
-@app.api()
-def get_cart_count(req: GetCartCountReq) -> Res[GetCartCountRes]:
-    if bg.user is None:
-        return err('로그인후 이용해주시기 바랍니다.')
-
-    return ok(GetCartCountRes(cart_count=bg.user.cart.total_count))
 
 
 class CartAddReq(BaseModel):
     product_pk: int
 
 
-class CartAddRes(BaseModel):
-    cart_count: int
-
-
 @app.api()
-def cart_add(req: CartAddReq) -> Res[CartAddRes]:
+def cart_add(req: CartAddReq) -> Res[CartRes]:
     if bg.user is None:
         return err('로그인후 이용해주시기 바랍니다.')
 
@@ -53,19 +77,15 @@ def cart_add(req: CartAddReq) -> Res[CartAddRes]:
 
     db.session.commit()
 
-    return ok(CartAddRes(cart_count=cart.total_count))
+    return ok(cart_res())
 
 
 class CartRemoveReq(BaseModel):
     product_pk: int
 
 
-class CartRemoveRes(BaseModel):
-    cart_count: int
-
-
 @app.api()
-def cart_remove(req: CartRemoveReq) -> Res[CartRemoveRes]:
+def cart_remove(req: CartRemoveReq) -> Res[CartRes]:
     if bg.user is None:
         return err('로그인후 이용해주시기 바랍니다.')
 
@@ -85,51 +105,16 @@ def cart_remove(req: CartRemoveReq) -> Res[CartRemoveRes]:
         cart_item.count -= 1
 
     db.session.commit()
-    return ok(CartRemoveRes(cart_count=cart.total_count))
+    return ok(cart_res())
 
 
 class CartListReq(BaseModel):
     pass
 
 
-class CartListResItem(BaseModel):
-    pk: int
-    image: Asset.Bsset
-    name: str
-    detail: str
-    price: int
-    count: int
-    product_pk: int
-
-    @classmethod
-    def from_model(cls, cart_item: CartItem) -> 'CartListResItem':
-        return CartListResItem(
-            pk=cart_item.pk, image=cart_item.product.main_image.to_bsset(), name=cart_item.product.name,
-            detail=cart_item.product.detail, price=cart_item.product.price, count=cart_item.count,
-            product_pk=cart_item.product_pk
-        )
-
-
-class CartListRes(BaseModel):
-    total_price: int
-    total_delivery_fee: int
-    carts: list[CartListResItem]
-
-
 @app.api()
-def cart_list(req: CartListReq) -> Res[CartListRes]:
+def cart_list(req: CartListReq) -> Res[CartRes]:
     if bg.user is None:
         return err('로그인 후 이용가능합니다.')
 
-    cart_items = db.session.execute(
-        db.select(CartItem).filter_by(cart_pk=bg.user.cart.pk, delete_at=None)
-    ) \
-        .all()
-
-    return ok(
-        CartListRes(
-            total_price=bg.user.cart.total_price,
-            total_delivery_fee=bg.user.cart.total_delivery_fee,
-            carts=list(map(lambda x: CartListResItem.from_model(x), bg.user.cart.cart_items))
-        )
-    )
+    return ok(cart_res())
