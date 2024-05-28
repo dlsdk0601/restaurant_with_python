@@ -61,7 +61,7 @@ class CartRemoveReq(BaseModel):
 
 
 class CartRemoveRes(BaseModel):
-    product_pk: int
+    cart_count: int
 
 
 @app.api()
@@ -85,7 +85,7 @@ def cart_remove(req: CartRemoveReq) -> Res[CartRemoveRes]:
         cart_item.count -= 1
 
     db.session.commit()
-    return ok(CartRemoveRes(product_pk=cart_item.product_pk))
+    return ok(CartRemoveRes(cart_count=cart.total_count))
 
 
 class CartListReq(BaseModel):
