@@ -11,9 +11,13 @@ part 'router.g.dart';
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: [
-    TypedGoRoute<RestaurantShowRoute>(path: 'restaurant-show/:pk'),
+    TypedGoRoute<RestaurantShowRoute>(
+      path: 'restaurant-show/:pk',
+      routes: [
+        TypedGoRoute<CartScreenRoute>(path: 'cart'),
+      ],
+    ),
     TypedGoRoute<ProductListRoute>(path: "product-list"),
-    TypedGoRoute<CartScreenRoute>(path: 'cart'),
   ],
 )
 class HomeRoute extends GoRouteData {
@@ -42,7 +46,9 @@ class ProductListRoute extends GoRouteData {
 }
 
 class CartScreenRoute extends GoRouteData {
-  const CartScreenRoute();
+  const CartScreenRoute(this.pk);
+
+  final int pk;
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const CartScreen();

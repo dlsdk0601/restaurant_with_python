@@ -45,7 +45,7 @@ class RestaurantShowScreen extends HookConsumerWidget {
         onPressed: () {
           if (context.mounted) {
             context.go(
-              const CartScreenRoute().location,
+              CartScreenRoute(model.restaurant!.pk).location,
             );
           }
         },
