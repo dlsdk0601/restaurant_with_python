@@ -19,32 +19,16 @@ class RestaurantScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pageController = usePageController();
-
     final model = ref.watch(_modelStateProvider);
+    final pageController = useInitScrollController<_ModelState>(
+      ref,
+      _modelStateProvider.notifier,
+    );
 
     useEffect(() {
-      bool isFetching = false;
-
-      void controllerListener() async {
-        if (pageController.offset >
-            pageController.position.maxScrollExtent - 300) {
-          if (!isFetching) {
-            isFetching = true;
-            await ref.read(_modelStateProvider.notifier).onNext();
-            isFetching = false;
-          }
-        }
-      }
-
-      // add listener
-      Future.microtask(() => pageController.addListener(controllerListener));
       // init
       Future.microtask(() => ref.read(_modelStateProvider.notifier).init());
-      return () {
-        pageController.removeListener(controllerListener);
-        pageController.dispose();
-      };
+      return null;
     }, []);
 
     if (!model.initialized) {
@@ -259,7 +243,7 @@ class _IconText extends StatelessWidget {
 }
 
 @riverpod
-class _ModelState extends _$ModelState with InitModel {
+class _ModelState extends _$ModelState with PageInitModel {
   @override
   _Model build() => const _Model(
         initialized: false,

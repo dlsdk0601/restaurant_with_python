@@ -19,8 +19,9 @@ class ProductListScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pageController = usePageController();
     final model = ref.watch(_modelStateProvider);
+    final pageController =
+        useInitScrollController<_ModelState>(ref, _modelStateProvider.notifier);
 
     useEffect(() {
       bool isFetching = false;
@@ -41,7 +42,6 @@ class ProductListScreen extends HookConsumerWidget {
 
       return () {
         pageController.removeListener(controllerListener);
-        pageController.dispose();
       };
     }, []);
 
@@ -84,7 +84,7 @@ class ProductListScreen extends HookConsumerWidget {
 }
 
 @riverpod
-class _ModelState extends _$ModelState with InitModel {
+class _ModelState extends _$ModelState with PageInitModel {
   @override
   _Model build() => const _Model(
         initialized: false,
