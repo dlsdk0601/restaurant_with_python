@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import auto
 
 from sqlalchemy import DateTime, func, Enum, ForeignKey, Integer
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ex.py.enum_ex import StringEnum
@@ -28,6 +29,11 @@ class Order(Model):
     total_price: Mapped[int] = mapped_column(Integer, nullable=False, comment='주문 가격')
 
     order_items: Mapped[list['OrderItem']] = relationship('OrderItem', back_populates='order')
+
+    @hybrid_property
+    def restaurant_name(self) -> str:
+        restaurant = self.order_items[0].product.restaurant
+        return restaurant.name
 
     __table_args__ = (
         {'comment': '주문'},
