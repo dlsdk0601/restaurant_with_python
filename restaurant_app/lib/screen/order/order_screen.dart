@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:restaurant_app/api/schema.gen.dart';
 import 'package:restaurant_app/color.dart';
+import 'package:restaurant_app/ex/dt.dart';
 import 'package:restaurant_app/ex/hook.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../globals.dart';
 
 part 'order_screen.freezed.dart';
 part 'order_screen.g.dart';
@@ -14,8 +18,17 @@ class OrderScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pageController = usePageController();
     final model = ref.watch(_modelStateProvider);
+    final pageController = useInitScrollController<_ModelState>(
+      ref,
+      _modelStateProvider.notifier,
+    );
+
+    useEffect(() {
+      // init
+      Future.microtask(() => ref.read(_modelStateProvider.notifier).init());
+      return null;
+    }, []);
 
     if (!model.initialized) {
       return Container();
@@ -40,8 +53,9 @@ class OrderScreen extends HookConsumerWidget {
             );
           },
           itemBuilder: (_, index) {
-            // TODO :: api 나오면 연결
-            return Container();
+            return OrderListItemView.fromModel(
+              model: model.orders[index],
+            );
           },
         ),
       ),
@@ -53,7 +67,7 @@ class OrderListItemView extends StatelessWidget {
   final DateTime orderDate;
   final Image image;
   final String name;
-  final String productsDetail;
+  final String productNames;
   final int price;
 
   const OrderListItemView({
@@ -61,21 +75,34 @@ class OrderListItemView extends StatelessWidget {
     required this.orderDate,
     required this.image,
     required this.name,
-    required this.productsDetail,
+    required this.productNames,
     required this.price,
   });
 
-  String get routerName =>
-      "${orderDate.year}.${orderDate.month.toString().padLeft(2, "0")}.${orderDate.day.toString().padLeft(2, "0")}";
-
-  // TODO :: factory
+  factory OrderListItemView.fromModel({
+    required OrderListResItem model,
+  }) =>
+      OrderListItemView(
+        orderDate: model.orderDate,
+        image: Image.network(
+          'http://localhost:5001/api${model.image.url}',
+          height: 50.0,
+          width: 50.0,
+          fit: BoxFit.cover,
+        ),
+        name: model.name,
+        productNames: model.productNames.length < 2
+            ? model.productNames.first
+            : "${model.productNames.first} 외${model.productNames.length - 1}개",
+        price: model.price,
+      );
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text("$routerName 주문 완료"),
+        Text("${orderDate.d1} 주문 완료"),
         const SizedBox(
           height: 8.0,
         ),
@@ -96,7 +123,7 @@ class OrderListItemView extends StatelessWidget {
                   style: const TextStyle(fontSize: 14.0),
                 ),
                 Text(
-                  "$productsDetail $price원",
+                  "$productNames $price원",
                   style: const TextStyle(
                     color: BODY_TEXT_COLOR,
                     fontWeight: FontWeight.w300,
@@ -112,7 +139,7 @@ class OrderListItemView extends StatelessWidget {
 }
 
 @riverpod
-class _ModelState extends _$ModelState with InitModel {
+class _ModelState extends _$ModelState with PageInitModel {
   @override
   _Model build() => const _Model(
         initialized: false,
@@ -150,7 +177,20 @@ class _ModelState extends _$ModelState with InitModel {
       return;
     }
 
-    // final res =
+    final res = await api.orderList(OrderListReq(page: page ?? 1));
+
+    if (res == null) {
+      return;
+    }
+
+    final list = res.orders.rows.map((e) => e.item);
+    state = state.copyWith(
+      initialized: true,
+      isFetching: false,
+      orders: [...state.orders, ...list],
+      hasNext: res.orders.hasNext,
+      page: res.orders.page,
+    );
   }
 
   @override
@@ -172,6 +212,6 @@ class _Model with _$Model {
     required bool isFetching,
     required int page,
     required bool hasNext,
-    required List<int> orders,
+    required List<OrderListResItem> orders,
   }) = __Model;
 }
