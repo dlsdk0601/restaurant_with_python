@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/color.dart';
+import 'package:restaurant_app/screen/order/order_screen.dart';
 import 'package:restaurant_app/screen/product/product_list_screen.dart';
 import 'package:restaurant_app/screen/restaurant/restaurant_screen.dart';
 import 'package:restaurant_app/view/default_layout.dart';
@@ -84,9 +85,7 @@ class _HomeScreenState extends State<HomeScreen>
         children: const [
           RestaurantScreen(),
           ProductListScreen(),
-          Center(
-            child: Text("주문"),
-          ),
+          OrderScreen(),
           Center(
             child: Text("프로필"),
           ),
