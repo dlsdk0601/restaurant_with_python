@@ -41,7 +41,9 @@ class UserModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signOut() async {}
+  Future<void> signOut() async {
+    // TODO :: signOut API 연동
+  }
 
   Future<void> setAccessToken(String accessToken) async {
     this.accessToken = accessToken;
